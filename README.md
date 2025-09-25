@@ -1,87 +1,113 @@
-# ASCII Raymarcher
-A fast, mobile-optimized webapp for interactive 3D raymarching rendered as ASCII art in the browser. Features real-time controls for shape, lighting, surface noise, color, and performance, all rendered in a canvas using JavaScript and SDFs (Signed Distance Functions).
-## Features
-- **Interactive 3D ASCII rendering**: Choose from multiple shapes (sphere, box, torus, etc.) and control their size, rotation, and animation.
-- **Lighting controls**: Adjust ambient, diffuse, specular, shininess, shadows, and ambient occlusion.
-- **Surface noise**: Add animated procedural noise to surfaces.
-- **ASCII & color**: Select ASCII presets, custom characters, color modes, palettes, and gamma.
-- **Performance tuning**: Adaptive resolution, temporal anti-aliasing, FPS target, and more.
-- **Mobile-friendly UI**: Responsive layout, touch controls, and fullscreen support.
-## Demo
-Open `index.html` in your browser. No build step required.
-## File Structure
-- `index.html` – Main HTML entry point
-- `styles.css` – Responsive, modern CSS for layout and controls
-- `scripts/`
-  - `main.js` – App entry, initializes UI, input, and renderer
-  - `renderer.js` – Core ASCII raymarching renderer
-  - `sdf.js` – Signed Distance Functions for 3D shapes
-  - `ui.js`, `input.js`, `state.js` – UI, input, and state management
-  - `noise.js`, `palettes.js`, `utils.js` – Noise, color palettes, and math utilities
-## Usage
-1. Clone or download this repo.
-2. Open `index.html` in any modern browser (desktop or mobile).
-3. Use the controls to explore different shapes, lighting, and effects.
-## Controls
-- **Mouse/touch**: Drag to orbit, pinch/wheel to zoom
-- **Keyboard**: WASD, QE to move, R to reset
-- **Panel**: Adjust all rendering and scene parameters
-## Technologies
-- Vanilla JavaScript (ES6 modules)
-- HTML5 Canvas
-- CSS3 (responsive, dark/light mode)
 # ASCII Raymarcher (Next.js + TypeScript)
 
-This project is a full migration of the original vanilla JS ASCII Raymarcher webapp to Next.js (App Router) with strict TypeScript. All former `.js` modules have been rewritten as `.ts` with appropriate types—not just renamed.
+A mobile‑optimized ASCII raymarcher and SDF demo built with Next.js and TypeScript. It renders 3D signed distance fields (SDFs) to an HTML canvas and paints ASCII characters (optionally colored) for a stylized, low‑bandwidth visual effect. The app includes temporal anti‑aliasing (TAA), adaptive resolution for stable FPS on phones, and many runtime controls.
 
-The UI, look, and runtime behavior remain functionally identical: real-time SDF ray marching drawn into a 2D canvas, adaptive resolution, temporal AA, ASCII palettes, lighting, surface noise, and responsive mobile controls.
+This README summarizes how to run the project locally, what the main source files do, available controls, and quick pointers for development and deployment.
 
-## Getting Started
+## Key features
+- SDF-based ray marching of many primitive shapes (sphere, torus, box, prism, heart, egg, ...)
+- ASCII character rendering with color palettes and modes (luma, depth, normal, specular, momentum)
+- Temporal AA (TAA) and adaptive resolution to stabilize performance
+- Mobile-optimized UI and touch controls (pinch to zoom, drag to orbit)
+- Persistent settings stored to localStorage
 
-```bash
+## Requirements
+- Node.js (LTS) — Node 18+ is recommended for modern Next.js versions
+- npm (or yarn/pnpm) available in your shell
+
+No server-side secrets or environment variables are required to run the demo locally.
+
+## Quick start (local)
+
+Open a terminal (PowerShell on Windows) in the project root and run:
+
+```powershell
 npm install
 npm run dev
 ```
-Visit: http://localhost:3000
 
-Production build:
-```bash
+Then open http://localhost:3000 in your browser.
+
+Production build and run:
+
+```powershell
 npm run build
-npm start
+npm run start
 ```
 
-## Structure
+Type checking (TypeScript):
 
-app/           Next.js App Router layout & page (client component)
-app/globals.css  Ported global styles from original CSS
-scripts/       All logic (renderer, SDFs, noise, palettes, math, UI binding, input, state)
-public/        Static assets (add favicons / icons here)
-package.json   Next.js + React dependencies
-tsconfig.json  Strict TypeScript configuration
+```powershell
+npm run type-check
+```
 
-## Key Technical Changes
+## Project structure (important files)
 
-1. Strong typing for math helpers, SDF functions, noise, palettes, renderer, and state.
-2. State persistence retained via `localStorage` under key `ascii-raymarcher-state` (guarded for SSR safety).
-3. DOM imperative UI binding retained for performance; React is used only to mount static markup (avoids rewriting renderer logic into hooks unnecessarily).
-4. All adaptive + TAA logic unchanged; canvas render loop still uses `requestAnimationFrame`.
-5. Icons moved to `public/` (add actual files there; placeholder note included).
+- `app/layout.tsx` — top-level HTML layout and metadata for the Next.js app.
+- `app/page.tsx` — client page component which initializes the UI, input, and renderer.
+- `public/` — static assets (favicons and icons). See `public/README_ASSETS.txt` for notes.
+- `scripts/` — core demo code (all TypeScript modules used in the client):
+  - `renderer.ts` — the main rendering loop, canvas setup, ASCII painting, TAA, adaptive resolution, and frame scheduling.
+  - `ui.ts` — binds DOM controls to `state`, updates UI elements (FPS), and toggles fullscreen/panel.
+  - `input.ts` — pointer and keyboard handling (orbit, pinch/wheel zoom, keyboard camera control).
+  - `state.ts` — application state, defaults, and localStorage persistence.
+  - `sdf.ts` — signed distance functions and scene mapping, normal, soft shadow and AO helpers.
+  - `noise.ts` — noise helpers (value noise + FBM) used to perturb surfaces.
+  - `palettes.ts` — color palettes used to tint ASCII characters.
+  - `ascii.ts` — predefined ASCII presets.
+  - `utils.ts` — math utilities (vectors, matrices, halton, bayer dither, etc.).
 
-## Controls (unchanged)
+## Controls (in-app)
+- Mouse / touch:
+  - Drag: Orbit camera
+  - Wheel / Pinch: Zoom
+- Keyboard:
+  - W / S: tilt up / down
+  - A / D: yaw left / right
+  - Q / E: zoom out / in
+  - R: reset camera
+- UI Panel: many scene, lighting, noise, ASCII, color, and performance controls. On small screens use the "Controls" button to open the panel.
 
-Mouse / Touch: Drag to orbit, wheel or pinch to zoom
-Keyboard: WASD rotate/pitch, Q/E zoom, R reset camera
-Panel: Adjust shape, lighting, noise, ASCII, performance, color
+## Performance tuning tips
+- `fontSize` and `resScale` (resolution scale) significantly affect GPU/CPU cost — lower values increase framerate on phones.
+- `maxSteps` and `maxDist` control raymarch quality vs cost — increasing `maxSteps` yields crisper shadows/edges but costs more.
+- Enable `adaptive` res and set `Target FPS` to let the demo automatically scale resolution for smooth playback.
+- Turn off `colorEnabled` (monochrome ASCII) to reduce per-character coloring overhead.
 
-## Future Enhancements (Optional)
+## Development notes
+- The app is a purely client-side demo. The rendering logic lives entirely under `scripts/` and is initialized in `app/page.tsx`.
+- The renderer draws ASCII by measuring monospaced character metrics (`renderer.ts` → `updateFont`) and painting text rows to a 2D canvas. TAA uses a Halton jitter sequence and a small history buffer per character cell.
+- State persistence is implemented in `state.ts` using `localStorage`. Use `resetAll` in the UI to return to defaults.
+- If you add or change controls in the DOM, wire them in `ui.ts` using the `bind` helpers so they sync with `state`.
 
-- Dynamic import of heavy renderer code to reduce initial bundle.
-- Palette preview thumbnails.
-- Export current frame as text or PNG.
-- User presets and shareable state URLs.
+## Running tests / type checks
+- This repository currently has no unit tests. Use the TypeScript check to catch type errors:
+
+```powershell
+npm run type-check
+```
+
+## Deployment
+- This is a standard Next.js app — deploy on Vercel for the easiest experience, or build and serve with `npm run build` + `npm run start` on any Node host.
+
+## Troubleshooting
+- Blank canvas / no rendering: ensure `scripts/` files are loaded by the client (the page is marked `'use client'` in `app/page.tsx`) and open the browser console for errors.
+- Very low FPS on phones: lower `fontSize`, set `resScale` < 1.0, reduce `maxSteps`, enable `adaptive` and lower `Target FPS`.
+- Strange character alignment or clipping: try toggling `fontSize` or resizing the browser; the renderer recalculates font metrics and grid layout.
+
+## Contributing
+- Small changes, bug fixes, or performance improvements welcome. Please open an issue first if you plan a larger change.
+- Add a license file (none is included by default) if you want to allow reuse.
 
 ## License
+No license file is present in this repository. Add a `LICENSE` if you want to publish under an open license.
 
-Original content retained; this migration only restructures for Next.js + TypeScript.
+---
 
-Enjoy exploring high-performance ASCII raymarching! 
+If you'd like, I can also:
+- Add a minimal CI workflow for building the Next app on push.
+- Add a small screenshot or GIF to the README (you can drop images into `public/`).
+- Add a `LICENSE` template and a short `CONTRIBUTING.md`.
+
+Completion summary:
+- Created `README.md` with install/run instructions, file map, controls, performance tips and development notes.
