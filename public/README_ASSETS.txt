@@ -1,0 +1,1 @@
+Add original favicon / PWA icons here (moved from project root during Next.js migration).
