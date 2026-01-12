@@ -156,7 +156,7 @@ export default function Page(){
                 <label>Blend <input id="taaAmt" type="range" min="0" max="0.95" step="0.01" defaultValue="0.6"/></label>
               </div>
               <div className="row">
-                <label className="inline"><input id="adaptive" type="checkbox" defaultChecked /> Adaptive res</label>
+                <label className="inline"><input id="adaptive" type="checkbox" /> Adaptive res</label>
                 <label>Target FPS <input id="targetFps" type="range" min="24" max="90" step="1" defaultValue="50"/></label>
               </div>
               <div className="row">

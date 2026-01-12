@@ -17,7 +17,7 @@ export const defaultState: AppState = {
   ambient: 0.25, diffuse: 1.05, specular: 0.5, shininess: 32, shadows: true, shadowK: 12, ao: true, aoStrength: 0.9,
   noiseEnabled: false, noiseAmt: 0.16, noiseScale: 2.0, noiseSpeed: 0.9, noiseOct: 3,
   asciiPreset: 'dense', asciiChars: ASCII_PRESETS.dense, invert: false, colorEnabled: true, gamma: 1.0, colorMode: 'luma', palette: 'viridis',
-  fontSize: 14, resScale: 1.0, maxSteps: 72, maxDist: 24, taa: true, taaAmt: 0.6, adaptive: true, targetFps: 50,
+  fontSize: 14, resScale: 1.0, maxSteps: 72, maxDist: 24, taa: true, taaAmt: 0.6, adaptive: false, targetFps: 50,
   camDist: 6.0, camYaw: 0, camPitch: 0,
 };
 
