@@ -3,5 +3,9 @@ export const ASCII_PRESETS: Record<string, string> = {
   classic: ' .:-=+*#%@',
   blocks: ' ░▒▓█',
   dots: ' `·.:;ox%#@',
-  binary: ' 01'
+  binary: ' 01',
+  sparse: ' .oO@',
+  line: '/\\|_-',
+  blocky: ' ░▒▓█▉',
+  retro: ' .,:;iIl!tTfFjrxnuvczXYUJ'
 };

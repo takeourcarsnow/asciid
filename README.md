@@ -7,6 +7,7 @@ This README summarizes how to run the project locally, what the main source file
 ## Key features
 - SDF-based ray marching of many primitive shapes (sphere, torus, box, prism, heart, egg, ...)
 - ASCII character rendering with color palettes and modes (luma, depth, normal, specular, momentum)
+- New color palettes and presets (Gameboy, NES, Sega, Retro palettes; additional ASCII presets: sparse, line, blocky, retro)
 - Temporal AA (TAA) and adaptive resolution to stabilize performance
 - Mobile-optimized UI and touch controls (pinch to zoom, drag to orbit)
 - Persistent settings stored to localStorage
@@ -67,6 +68,7 @@ npm run type-check
   - Q / E: zoom out / in
   - R: reset camera
 - UI Panel: many scene, lighting, noise, ASCII, color, and performance controls. On small screens use the "Controls" button to open the panel.
+- Recording: A new "Recording" section in the panel allows you to set duration, FPS, and resolution, and export a WebM video of the animation. Large resolutions may be memory and CPU intensive; browser support for `MediaRecorder` varies.
 
 ## Performance tuning tips
 - `fontSize` and `resScale` (resolution scale) significantly affect GPU/CPU cost — lower values increase framerate on phones.

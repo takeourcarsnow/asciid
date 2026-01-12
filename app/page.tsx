@@ -21,14 +21,13 @@ export default function Page(){
         <span id="title">ASCII Raymarcher</span>
         <span className="pill tiny">Optimized • TAA • Adaptive • SDF</span>
         <span className="spacer" />
-        <button id="panelBtn" title="Toggle Controls (mobile)">Controls<span id="mobileTip"> ☰</span></button>
         <button id="fullscreenBtn" title="Fullscreen">Fullscreen</button>
         <span id="fps" className="pill tiny">FPS: --</span>
       </div>
       <div id="main">
         <div id="viewer">
           <canvas id="canvas" />
-          <div id="hud" className="tiny">Drag to orbit • Pinch/Wheel to zoom • Keys: WASD, QE, R reset</div>
+          <div id="hud" className="tiny">Drag to rotate object • Pinch/Wheel to zoom • WASD: pitch/roll, QE zoom, R reset camera</div>
         </div>
         <div id="panel" className="">
           <details open>
@@ -71,7 +70,14 @@ export default function Page(){
               </div>
               <div className="row">
                 <label className="inline"><input id="autoSpin" type="checkbox" defaultChecked /> Auto spin</label>
-                <label>Speed <input id="spinSpeed" type="range" min="-3" max="3" step="0.01" defaultValue="0.6"/></label>
+                <label>Axis
+                  <select id="autoSpinAxis" defaultValue="X">
+                    <option>X</option>
+                    <option>Y</option>
+                    <option>Z</option>
+                  </select>
+                </label>
+                <label>Speed <input id="spinSpeed" type="range" min="-5" max="5" step="0.1" defaultValue="2.0"/></label>
               </div>
             </div>
           </details>
@@ -112,6 +118,10 @@ export default function Page(){
                   <option value="blocks">Blocks</option>
                   <option value="dots">Dots</option>
                   <option value="binary">Binary</option>
+                  <option value="sparse">Sparse</option>
+                  <option value="line">Line</option>
+                  <option value="blocky">Blocky</option>
+                  <option value="retro">Retro</option>
                 </select>
               </label>
               <label>Characters
@@ -131,6 +141,7 @@ export default function Page(){
                   <option value="normal">Normal</option>
                   <option value="specular">Specular</option>
                   <option value="momentum">Momentum</option>
+                  <option value="hue">Hue</option>
                 </select>
               </label>
               <label>Palette
@@ -140,6 +151,10 @@ export default function Page(){
                   <option value="ice">Ice</option>
                   <option value="viridis">Viridis</option>
                   <option value="rainbow">Rainbow</option>
+                  <option value="gameboy">Gameboy</option>
+                  <option value="nes">NES</option>
+                  <option value="sega">Sega</option>
+                  <option value="retro">Retro</option>
                 </select>
               </label>
             </div>
@@ -164,6 +179,30 @@ export default function Page(){
                 <button id="resetAll" type="button" title="Reset all controls">Reset all</button>
               </div>
               <div className="hint tiny">Adaptive res keeps FPS stable. Increase Max steps for crisper edges/shadows. On phones, try Font 12–14 and Res 0.8–1.0.</div>
+            </div>
+          </details>
+          <details>
+            <summary>Recording</summary>
+            <div className="group">
+              <label>Duration (s) <input id="recordDuration" type="number" min="1" max="60" step="1" defaultValue={5} /></label>
+              <label>FPS <input id="recordFps" type="number" min="1" max="120" step="1" defaultValue={30} /></label>
+              <label>Resolution
+                <select id="recordResolution" defaultValue="canvas">
+                  <option value="canvas">Same as canvas</option>
+                  <option value="1280x720">1280 × 720 (720p)</option>
+                  <option value="1920x1080">1920 × 1080 (1080p)</option>
+                  <option value="custom">Custom</option>
+                </select>
+              </label>
+              <div id="recordCustom" style={{display: 'none'}}>
+                <label>Width <input id="recordWidth" type="number" min="16" max="3840" step="1" defaultValue={1280} /></label>
+                <label>Height <input id="recordHeight" type="number" min="16" max="2160" step="1" defaultValue={720} /></label>
+              </div>
+              <div className="row">
+                <button id="recordBtn" type="button">Start Recording</button>
+                <span id="recordStatus" className="tiny" style={{marginLeft:12}}>Idle</span>
+              </div>
+              <div className="hint tiny">Recording uses MediaRecorder (WebM) and may not be supported in all browsers. Large resolutions may be memory intensive.</div>
             </div>
           </details>
         </div>

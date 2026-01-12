@@ -37,8 +37,15 @@ export function initInput(canvas: HTMLCanvasElement){
       const dx = e.clientX - pointer.lastX;
       const dy = e.clientY - pointer.lastY;
       pointer.lastX = e.clientX; pointer.lastY = e.clientY;
-      state.camYaw += dx * 0.004;
-      state.camPitch = clamp(state.camPitch + dy * 0.004, -1.35, 1.35);
+      const degPerPixel = 0.004 * (180 / Math.PI);
+      state.rotY += dx * degPerPixel;
+      state.rotX = clamp(state.rotX + dy * degPerPixel, -180, 180);
+      state.rotY = ((state.rotY % 360) + 360) % 360;
+      if (state.rotY > 180) state.rotY -= 360;
+      const rotXEl = document.getElementById('rotX') as HTMLInputElement;
+      if (rotXEl) rotXEl.value = state.rotX.toFixed(1);
+      const rotYEl = document.getElementById('rotY') as HTMLInputElement;
+      if (rotYEl) rotYEl.value = state.rotY.toFixed(1);
     }
   }, {passive:false});
   canvas.addEventListener('pointerup', (e)=>{
@@ -54,11 +61,18 @@ export function initInput(canvas: HTMLCanvasElement){
 
 export function updateKeyboard(dt:number){
   const speed = 0.8 * dt;
+  const speedDeg = speed * (180 / Math.PI);
   if(key['r']){ state.camYaw=0; state.camPitch=0; state.camDist=defaultState.camDist; }
-  if(key['a']) state.camYaw -= speed;
-  if(key['d']) state.camYaw += speed;
-  if(key['w']) state.camPitch = clamp(state.camPitch - speed, -1.35, 1.35);
-  if(key['s']) state.camPitch = clamp(state.camPitch + speed, -1.35, 1.35);
+  if(key['a']) { state.rotZ -= speedDeg; state.rotZ = ((state.rotZ % 360) + 360) % 360; if (state.rotZ > 180) state.rotZ -= 360; }
+  if(key['d']) { state.rotZ += speedDeg; state.rotZ = ((state.rotZ % 360) + 360) % 360; if (state.rotZ > 180) state.rotZ -= 360; }
+  if(key['w']) { state.rotX = clamp(state.rotX - speedDeg, -180, 180); }
+  if(key['s']) { state.rotX = clamp(state.rotX + speedDeg, -180, 180); }
   if(key['q']) state.camDist = clamp(state.camDist + speed*2, 1.5, 24);
   if(key['e']) state.camDist = clamp(state.camDist - speed*2, 1.5, 24);
+  const rotXEl = document.getElementById('rotX') as HTMLInputElement;
+  if (rotXEl) rotXEl.value = state.rotX.toFixed(1);
+  const rotYEl = document.getElementById('rotY') as HTMLInputElement;
+  if (rotYEl) rotYEl.value = state.rotY.toFixed(1);
+  const rotZEl = document.getElementById('rotZ') as HTMLInputElement;
+  if (rotZEl) rotZEl.value = state.rotZ.toFixed(1);
 }

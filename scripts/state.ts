@@ -3,22 +3,34 @@ import { ASCII_PRESETS } from './ascii';
 const STORAGE_KEY = 'ascii-raymarcher-state';
 
 export interface AppState {
-  shape: string; size: number; rotX: number; rotY: number; rotZ: number; autoSpin: boolean; spinSpeed: number;
+  shape: string; size: number; rotX: number; rotY: number; rotZ: number; autoSpin: boolean; autoSpinAxis: string; spinSpeed: number;
   ambient: number; diffuse: number; specular: number; shininess: number; shadows: boolean; shadowK: number; ao: boolean; aoStrength: number;
   noiseEnabled: boolean; noiseAmt: number; noiseScale: number; noiseSpeed: number; noiseOct: number;
   asciiPreset: string; asciiChars: string; invert: boolean; colorEnabled: boolean; gamma: number; colorMode: string; palette: string;
   fontSize: number; resScale: number; maxSteps: number; maxDist: number; taa: boolean; taaAmt: number; adaptive: boolean; targetFps: number;
   camDist: number; camYaw: number; camPitch: number;
+  // Recording
+  recordDuration: number; // seconds
+  recordFps: number;
+  recordResolution: string; // 'canvas' | '1280x720' | '1920x1080' | 'custom'
+  recordWidth: number;
+  recordHeight: number;
   [k:string]: any; // allow dynamic
-}
+} 
 
 export const defaultState: AppState = {
-  shape: 'Torus', size: 1.1, rotX: 20, rotY: 35, rotZ: 0, autoSpin: true, spinSpeed: 0.6,
+  shape: 'Torus', size: 1.1, rotX: 20, rotY: 35, rotZ: 0, autoSpin: true, autoSpinAxis: 'X', spinSpeed: 2.0,
   ambient: 0.25, diffuse: 1.05, specular: 0.5, shininess: 32, shadows: true, shadowK: 12, ao: true, aoStrength: 0.9,
   noiseEnabled: false, noiseAmt: 0.16, noiseScale: 2.0, noiseSpeed: 0.9, noiseOct: 3,
   asciiPreset: 'dense', asciiChars: ASCII_PRESETS.dense, invert: false, colorEnabled: true, gamma: 1.0, colorMode: 'luma', palette: 'viridis',
   fontSize: 14, resScale: 1.0, maxSteps: 72, maxDist: 24, taa: true, taaAmt: 0.6, adaptive: false, targetFps: 50,
   camDist: 6.0, camYaw: 0, camPitch: 0,
+  // Recording defaults
+  recordDuration: 5, // seconds
+  recordFps: 30,
+  recordResolution: 'canvas',
+  recordWidth: 1280,
+  recordHeight: 720,
 };
 
 export const state: AppState = (() => {
