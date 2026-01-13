@@ -231,6 +231,22 @@ export const presets: Preset[] = (() => {
         }
         // Save merged presets back to localStorage
         localStorage.setItem(PRESETS_KEY, JSON.stringify(merged));
+        // Try to auto-load bundled presets from public/presets and merge into saved presets
+        (async ()=>{
+          try{
+            const res = await fetch('/presets/funky-presets-collection.json');
+            if(res.ok){
+              const imported = await res.json();
+              if(Array.isArray(imported)){
+                for(const p of imported){
+                  if(p.name && p.state && !merged.find(d=>d.name===p.name)) merged.push(p);
+                }
+                try{ localStorage.setItem(PRESETS_KEY, JSON.stringify(merged)); }catch{}
+                try{ window.dispatchEvent(new Event('presetsUpdated')); }catch{}
+              }
+            }
+          }catch{}
+        })();
         return merged;
       }
     }
@@ -240,6 +256,27 @@ export const presets: Preset[] = (() => {
   try {
     localStorage.setItem(PRESETS_KEY, JSON.stringify(defaultPresets));
   } catch {}
+
+  // Try to auto-load bundled presets from public/presets (if present)
+  (async ()=>{
+    try{
+      const res = await fetch('/presets/funky-presets-collection.json');
+      if(res.ok){
+        const imported = await res.json();
+        if(Array.isArray(imported)){
+          // merge, avoiding duplicate names
+          for(const p of imported){
+            if(p.name && p.state && !defaultPresets.find(d=>d.name===p.name)){
+              defaultPresets.push(p);
+            }
+          }
+          try{ localStorage.setItem(PRESETS_KEY, JSON.stringify(defaultPresets)); }catch{}
+          // notify any UI listeners
+          try{ window.dispatchEvent(new Event('presetsUpdated')); }catch{}
+        }
+      }
+    }catch{}
+  })();
 
   return defaultPresets;
 })();

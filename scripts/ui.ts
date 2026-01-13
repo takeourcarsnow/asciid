@@ -222,6 +222,9 @@ function bindAll(){
   }
 
   updatePresetSelect();
+
+  // Update preset UI when external presets are added at runtime
+  try{ window.addEventListener('presetsUpdated', ()=>{ updatePresetSelect(); }); }catch{}
 }
 function bindChrome(){
   elements.mobilePanelToggle?.addEventListener('click', ()=> togglePanel());
