@@ -142,6 +142,10 @@ export default function Page(){
                   <option value="specular">Specular</option>
                   <option value="momentum">Momentum</option>
                   <option value="hue">Hue</option>
+                  <option value="fresnel">Fresnel</option>
+                  <option value="steps">Steps</option>
+                  <option value="position">Position</option>
+                  <option value="ao">AO</option>
                 </select>
               </label>
               <label>Palette
