@@ -157,6 +157,7 @@ export default function Page(){
                   <option value="retro">Retro</option>
                 </select>
               </label>
+              <label>Background color <input id="backgroundColor" type="color" defaultValue="#000000"/></label>
             </div>
           </details>
           <details open>
@@ -224,7 +225,7 @@ export default function Page(){
                 <button id="importPresetsBtn" type="button">Import from JSON</button>
                 <button id="resetPresetsBtn" type="button">Reset to Defaults</button>
               </div>
-              <div className="hint tiny">Presets save all settings except camera position. Export creates a downloadable JSON file.</div>
+              <div className="hint tiny">Presets save all settings except camera position. Export creates a downloadable JSON file of current configuration.</div>
             </div>
           </details>
         </div>

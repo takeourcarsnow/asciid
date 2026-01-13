@@ -56,7 +56,7 @@ function bindAll(){
   bind('shape'); bind('size','value', parseFloat); bind('rotX','value', parseFloat); bind('rotY','value', parseFloat); bind('rotZ','value', parseFloat); bind('autoSpin','checked', Boolean); bind('autoSpinAxis'); bind('spinSpeed','value', parseFloat);
   bind('ambient','value', parseFloat); bind('diffuse','value', parseFloat); bind('specular','value', parseFloat); bind('shininess','value', x=>parseInt(x)); bind('shadows','checked', Boolean); bind('shadowK','value', parseFloat); bind('ao','checked', Boolean); bind('aoStrength','value', parseFloat);
   bind('noiseEnabled','checked', Boolean); bind('noiseAmt','value', parseFloat); bind('noiseScale','value', parseFloat); bind('noiseSpeed','value', parseFloat); bind('noiseOct','value', x=>parseInt(x));
-  bind('asciiPreset'); bind('asciiChars'); bind('invert','checked', Boolean); bind('colorEnabled','checked', Boolean); bind('gamma','value', parseFloat); bind('colorMode'); bind('palette');
+  bind('asciiPreset'); bind('asciiChars'); bind('invert','checked', Boolean); bind('colorEnabled','checked', Boolean); bind('gamma','value', parseFloat); bind('colorMode'); bind('palette'); bind('backgroundColor');
   bind('fontSize','value', x=>parseInt(x)); bind('resScale','value', parseFloat); bind('maxSteps','value', x=>parseInt(x)); bind('maxDist','value', parseFloat); bind('taa','checked', Boolean); bind('taaAmt','value', parseFloat); bind('adaptive','checked', Boolean); bind('targetFps','value', x=>parseInt(x));  // Recording controls
   bind('recordDuration','value', x=>parseFloat(x)); bind('recordFps','value', x=>parseInt(x)); bind('recordResolution'); bind('recordWidth','value', x=>parseInt(x)); bind('recordHeight','value', x=>parseInt(x));
   let isRecording = false;
@@ -171,7 +171,7 @@ function bindAll(){
       const now = new Date();
       const stamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
       a.href = url;
-      a.download = `asciid-presets-${stamp}.json`;
+      a.download = `asciid-config-${stamp}.json`;
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -187,11 +187,23 @@ function bindAll(){
         const reader = new FileReader();
         reader.onload = (e) => {
           const json = e.target?.result as string;
-          if (importPresets(json)) {
+          const result = importPresets(json);
+          if (result === 'presets') {
             updatePresetSelect();
             alert('Presets imported successfully!');
+          } else if (result === 'config') {
+            // Update UI elements to reflect imported config
+            for (const [k, v] of Object.entries(state)) {
+              const el = document.getElementById(k) as HTMLInputElement | HTMLSelectElement | null;
+              if (!el) continue;
+              if ((el as HTMLInputElement).type === 'checkbox') (el as HTMLInputElement).checked = !!v;
+              else (el as HTMLInputElement).value = String(v);
+            }
+            flags.needFontMetrics = true;
+            flags.needResize = true;
+            alert('Configuration imported successfully!');
           } else {
-            alert('Failed to import presets. Invalid JSON file.');
+            alert('Failed to import. Invalid JSON file.');
           }
         };
         reader.readAsText(file);

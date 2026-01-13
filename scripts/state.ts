@@ -10,6 +10,7 @@ export interface AppState {
   asciiPreset: string; asciiChars: string; invert: boolean; colorEnabled: boolean; gamma: number; colorMode: string; palette: string;
   fontSize: number; resScale: number; maxSteps: number; maxDist: number; taa: boolean; taaAmt: number; adaptive: boolean; targetFps: number;
   camDist: number; camYaw: number; camPitch: number;
+  backgroundColor: string;
   // Recording
   recordDuration: number; // seconds
   recordFps: number;
@@ -26,6 +27,7 @@ export const defaultState: AppState = {
   asciiPreset: 'dense', asciiChars: ASCII_PRESETS.dense, invert: false, colorEnabled: true, gamma: 1.0, colorMode: 'luma', palette: 'viridis',
   fontSize: 14, resScale: 1.0, maxSteps: 72, maxDist: 24, taa: true, taaAmt: 0.6, adaptive: false, targetFps: 50,
   camDist: 6.0, camYaw: 0, camPitch: 0,
+  backgroundColor: '#000000',
   // Recording defaults
   recordDuration: 5, // seconds
   recordFps: 30,
@@ -275,17 +277,28 @@ export function deletePreset(name: string) {
 }
 
 export function exportPresets(): string {
-  return JSON.stringify(presets, null, 2);
+  // Export current configuration
+  const currentState: Partial<AppState> = {};
+  for (const key of Object.keys(state)) {
+    (currentState as any)[key] = (state as any)[key];
+  }
+  return JSON.stringify(currentState, null, 2);
 }
 
-export function importPresets(json: string) {
+export function importPresets(json: string): 'presets' | 'config' | false {
   try {
     const imported = JSON.parse(json);
     if (Array.isArray(imported)) {
+      // Import as presets
       presets.length = 0;
       presets.push(...imported.filter(p => p.name && p.state));
       savePresetsToStorage();
-      return true;
+      return 'presets';
+    } else if (typeof imported === 'object' && imported !== null) {
+      // Import as single configuration
+      Object.assign(state, imported);
+      saveStateThrottled();
+      return 'config';
     }
   } catch {}
   return false;
