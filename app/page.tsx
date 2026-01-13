@@ -27,11 +27,32 @@ export default function Page(){
       <div id="main">
         <div id="viewer">
           <canvas id="canvas" />
-          <div id="hud" className="tiny">Drag to rotate object • Pinch/Wheel to zoom • WASD: pitch/roll, QE zoom, R reset camera</div>
         </div>
         <div id="panel" className="">
+          <details>
+            <summary>📁 Presets</summary>
+            <div className="group">
+              <label>Preset name <input id="presetName" type="text" placeholder="Enter preset name" /></label>
+              <div className="row">
+                <button id="savePresetBtn" type="button">Save Preset</button>
+                <button id="deletePresetBtn" type="button">Delete</button>
+              </div>
+              <label>Load preset
+                <select id="loadPresetSelect">
+                  <option value="">-- Select preset --</option>
+                </select>
+              </label>
+              <div className="row">
+                <button id="exportPresetsBtn" type="button">Export to JSON</button>
+                <input id="importPresetsInput" type="file" accept=".json" style={{display: 'none'}} />
+                <button id="importPresetsBtn" type="button">Import from JSON</button>
+                <button id="resetPresetsBtn" type="button">Reset to Defaults</button>
+              </div>
+              <div className="hint tiny">Presets save all settings except camera position. Export creates a downloadable JSON file of current configuration.</div>
+            </div>
+          </details>
           <details open>
-            <summary>Scene</summary>
+            <summary>🔧 Scene</summary>
             <div className="group">
               <label>Shape
                 <select id="shape" defaultValue="Torus">
@@ -82,7 +103,7 @@ export default function Page(){
             </div>
           </details>
           <details open>
-            <summary>Lighting</summary>
+            <summary>💡 Lighting</summary>
             <div className="group">
               <label>Ambient <input id="ambient" type="range" min="0" max="1" step="0.01" defaultValue="0.25"/></label>
               <label>Diffuse <input id="diffuse" type="range" min="0" max="2" step="0.01" defaultValue="1.05"/></label>
@@ -99,7 +120,7 @@ export default function Page(){
             </div>
           </details>
           <details open>
-            <summary>Surface Noise / Animation</summary>
+            <summary>🌊 Surface Noise / Animation</summary>
             <div className="group">
               <label className="inline"><input id="noiseEnabled" type="checkbox" /> Enable noise</label>
               <label>Amount <input id="noiseAmt" type="range" min="0" max="0.8" step="0.001" defaultValue="0.16"/></label>
@@ -109,7 +130,7 @@ export default function Page(){
             </div>
           </details>
           <details open>
-            <summary>ASCII &amp; Color</summary>
+            <summary>🎨 ASCII &amp; Color</summary>
             <div className="group">
               <label>ASCII preset
                 <select id="asciiPreset" defaultValue="dense">
@@ -165,7 +186,7 @@ export default function Page(){
             </div>
           </details>
           <details open>
-            <summary>Render &amp; Performance</summary>
+            <summary>⚙️ Render &amp; Performance</summary>
             <div className="group">
               <label>Font size <input id="fontSize" type="range" min="8" max="28" step="1" defaultValue="14"/></label>
               <label>Resolution <input id="resScale" type="range" min="0.5" max="2" step="0.01" defaultValue="1.0"/></label>
@@ -187,7 +208,7 @@ export default function Page(){
             </div>
           </details>
           <details>
-            <summary>Recording</summary>
+            <summary>🎥 Recording</summary>
             <div className="group">
               <label>Duration (s) <input id="recordDuration" type="number" min="1" max="60" step="1" defaultValue={5} /></label>
               <label>FPS <input id="recordFps" type="number" min="1" max="120" step="1" defaultValue={30} /></label>
@@ -208,28 +229,6 @@ export default function Page(){
                 <span id="recordStatus" className="tiny" style={{marginLeft:12}}>Idle</span>
               </div>
               <div className="hint tiny">Recording uses MediaRecorder (WebM) and may not be supported in all browsers. Large resolutions may be memory intensive.</div>
-            </div>
-          </details>
-          <details>
-            <summary>Presets</summary>
-            <div className="group">
-              <label>Preset name <input id="presetName" type="text" placeholder="Enter preset name" /></label>
-              <div className="row">
-                <button id="savePresetBtn" type="button">Save Preset</button>
-                <button id="deletePresetBtn" type="button">Delete</button>
-              </div>
-              <label>Load preset
-                <select id="loadPresetSelect">
-                  <option value="">-- Select preset --</option>
-                </select>
-              </label>
-              <div className="row">
-                <button id="exportPresetsBtn" type="button">Export to JSON</button>
-                <input id="importPresetsInput" type="file" accept=".json" style={{display: 'none'}} />
-                <button id="importPresetsBtn" type="button">Import from JSON</button>
-                <button id="resetPresetsBtn" type="button">Reset to Defaults</button>
-              </div>
-              <div className="hint tiny">Presets save all settings except camera position. Export creates a downloadable JSON file of current configuration.</div>
             </div>
           </details>
         </div>

@@ -30,7 +30,9 @@ export function initInput(canvas: HTMLCanvasElement){
       const dist=Math.hypot(dx,dy);
       if(pointer.lastDist>0){
         const delta = (dist - pointer.lastDist) * 0.01;
-        state.camDist = clamp(state.camDist - delta, 1.5, 24);
+        state.size = clamp(state.size + delta, 0.2, 2.5);
+        const sizeEl = document.getElementById('size') as HTMLInputElement;
+        if (sizeEl) sizeEl.value = state.size.toString();
       }
       pointer.lastDist = dist;
     }else if(e.pointerId===pointer.id){
@@ -55,7 +57,9 @@ export function initInput(canvas: HTMLCanvasElement){
   canvas.addEventListener('wheel', (e)=>{
     e.preventDefault();
     const s = Math.exp(-e.deltaY * 0.0012);
-    state.camDist = clamp(state.camDist * s, 1.5, 24);
+    state.size = clamp(state.size * s, 0.2, 2.5);
+    const sizeEl = document.getElementById('size') as HTMLInputElement;
+    if (sizeEl) sizeEl.value = state.size.toString();
   }, {passive:false});
 }
 
