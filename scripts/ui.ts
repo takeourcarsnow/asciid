@@ -1,5 +1,5 @@
 import { ASCII_PRESETS } from './ascii';
-import { defaultState, state, flags, saveStateThrottled, resetAllState } from './state';
+import { defaultState, state, flags, saveStateThrottled, resetAllState, presets, savePreset, loadPreset, deletePreset, exportPresets, importPresets, resetPresetsToDefaults } from './state';
 import { startRecording } from './recorder';
 
 const $ = <T extends Element = HTMLElement>(sel:string)=> document.querySelector(sel) as T | null;
@@ -102,6 +102,114 @@ function bindAll(){
     }
     flags.needFontMetrics = true; flags.needResize = true; saveStateThrottled();
   });
+  // Preset functionality
+  const presetNameEl = document.getElementById('presetName') as HTMLInputElement | null;
+  const loadPresetSelect = document.getElementById('loadPresetSelect') as HTMLSelectElement | null;
+  const savePresetBtn = document.getElementById('savePresetBtn') as HTMLButtonElement | null;
+  const deletePresetBtn = document.getElementById('deletePresetBtn') as HTMLButtonElement | null;
+  const exportPresetsBtn = document.getElementById('exportPresetsBtn') as HTMLButtonElement | null;
+  const importPresetsBtn = document.getElementById('importPresetsBtn') as HTMLButtonElement | null;
+  const importPresetsInput = document.getElementById('importPresetsInput') as HTMLInputElement | null;
+
+  function updatePresetSelect() {
+    if (!loadPresetSelect) return;
+    loadPresetSelect.innerHTML = '<option value="">-- Select preset --</option>';
+    presets.forEach(preset => {
+      const option = document.createElement('option');
+      option.value = preset.name;
+      option.textContent = preset.name;
+      loadPresetSelect.appendChild(option);
+    });
+  }
+
+  if (savePresetBtn && presetNameEl) {
+    savePresetBtn.onclick = () => {
+      const name = presetNameEl.value.trim();
+      if (name) {
+        savePreset(name);
+        updatePresetSelect();
+        presetNameEl.value = '';
+      }
+    };
+  }
+
+  if (loadPresetSelect) {
+    loadPresetSelect.onchange = () => {
+      const name = loadPresetSelect.value;
+      if (name) {
+        loadPreset(name);
+        // Update UI elements to reflect loaded state
+        for (const [k, v] of Object.entries(state)) {
+          const el = document.getElementById(k) as HTMLInputElement | HTMLSelectElement | null;
+          if (!el) continue;
+          if ((el as HTMLInputElement).type === 'checkbox') (el as HTMLInputElement).checked = !!v;
+          else (el as HTMLInputElement).value = String(v);
+        }
+        flags.needFontMetrics = true;
+        flags.needResize = true;
+        loadPresetSelect.value = '';
+      }
+    };
+  }
+
+  if (deletePresetBtn && loadPresetSelect) {
+    deletePresetBtn.onclick = () => {
+      const name = loadPresetSelect.value;
+      if (name && confirm(`Delete preset "${name}"?`)) {
+        deletePreset(name);
+        updatePresetSelect();
+      }
+    };
+  }
+
+  if (exportPresetsBtn) {
+    exportPresetsBtn.onclick = () => {
+      const json = exportPresets();
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const now = new Date();
+      const stamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19);
+      a.href = url;
+      a.download = `asciid-presets-${stamp}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    };
+  }
+
+  if (importPresetsBtn && importPresetsInput) {
+    importPresetsBtn.onclick = () => importPresetsInput.click();
+    importPresetsInput.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const json = e.target?.result as string;
+          if (importPresets(json)) {
+            updatePresetSelect();
+            alert('Presets imported successfully!');
+          } else {
+            alert('Failed to import presets. Invalid JSON file.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+  }
+
+  const resetPresetsBtn = document.getElementById('resetPresetsBtn') as HTMLButtonElement | null;
+  if (resetPresetsBtn) {
+    resetPresetsBtn.onclick = () => {
+      if (confirm('Reset all presets to defaults? This will remove any custom presets.')) {
+        resetPresetsToDefaults();
+        updatePresetSelect();
+      }
+    };
+  }
+
+  updatePresetSelect();
 }
 function bindChrome(){
   elements.mobilePanelToggle?.addEventListener('click', ()=> togglePanel());

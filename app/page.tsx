@@ -205,6 +205,28 @@ export default function Page(){
               <div className="hint tiny">Recording uses MediaRecorder (WebM) and may not be supported in all browsers. Large resolutions may be memory intensive.</div>
             </div>
           </details>
+          <details>
+            <summary>Presets</summary>
+            <div className="group">
+              <label>Preset name <input id="presetName" type="text" placeholder="Enter preset name" /></label>
+              <div className="row">
+                <button id="savePresetBtn" type="button">Save Preset</button>
+                <button id="deletePresetBtn" type="button">Delete</button>
+              </div>
+              <label>Load preset
+                <select id="loadPresetSelect">
+                  <option value="">-- Select preset --</option>
+                </select>
+              </label>
+              <div className="row">
+                <button id="exportPresetsBtn" type="button">Export to JSON</button>
+                <input id="importPresetsInput" type="file" accept=".json" style={{display: 'none'}} />
+                <button id="importPresetsBtn" type="button">Import from JSON</button>
+                <button id="resetPresetsBtn" type="button">Reset to Defaults</button>
+              </div>
+              <div className="hint tiny">Presets save all settings except camera position. Export creates a downloadable JSON file.</div>
+            </div>
+          </details>
         </div>
       </div>
       <div id="floatingControls">
